@@ -124,8 +124,22 @@ void QEvdevMouseManager::handleMouseEvent(int x, int y, bool abs, Qt::MouseButto
 {
     // update current absolute coordinates
     if (!abs) {
-        m_x += x;
-        m_y += y;
+        QScreen *primaryScreen = QGuiApplication::primaryScreen();
+
+        switch (primaryScreen->orientation()) {
+        case Qt::LandscapeOrientation:
+            m_x -= y;
+            m_y += x;
+            break;
+        case Qt::InvertedLandscapeOrientation:
+            m_x += y;
+            m_y -= x;
+            break;
+        default:
+            m_x += x;
+            m_y += y;
+            break;
+        }
     } else {
         m_x = x;
         m_y = y;
